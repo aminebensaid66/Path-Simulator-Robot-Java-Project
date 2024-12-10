@@ -1,14 +1,17 @@
 package com.example.demo;
-public abstract class Robot {
-    protected double batteryLevel;
-    protected Point position;
-    protected String state;
-    protected double conso;//consommation par case
-    public Robot(double batteryLevel, Point position,double conso) {
+
+public class Robot {
+    public double batteryLevel;
+    public Point position;
+    public String state;
+    public Robot() {
+
+    }
+
+    public Robot(double batteryLevel, Point position) {
         this.batteryLevel = batteryLevel;
         this.position = position;
         this.state = "Inactif";
-        this.conso=conso;
     }
 
     public double getBatteryLevel() {
@@ -34,11 +37,5 @@ public abstract class Robot {
     public void setState(String state) {
         this.state = state;
     }
-    public abstract void moveTo(Point destination);
-
-
-
 
 }
-
-

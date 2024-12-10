@@ -62,11 +62,9 @@ Robot robot;
     private void handleCellClick(int x, int y) {
         if (map == null) {
             System.out.println("Map is not initialized.");
-            return;
         }
         if (w==0) {
             System.out.println("Please select an action first (Obstacle or Charging Point).");
-            return;
         }
         else if (w==1) {
             addObstacle(x, y);
@@ -74,14 +72,12 @@ Robot robot;
             addChargingPoint(x, y);
         }
         else if (w==3) {
-            // Ensure the selected cell is valid
-            Point newPosition = new Point(x, y);
+            Point newPosition = new Point(y, x);
                 if (robot == null){
-                    robot=new RobotBasic(newPosition,100,1);
+                    robot=new Robot(100, newPosition);
                     System.out.println("Robot position set to: (" + x + ", " + y + ")");
                     updateCellButton(x,y); // Refresh the grid to show the robot in the new position
                     w=0; // Disable the mode after setting
-
                 }
                 else {
                     System.out.println("deja il y a un robot");
@@ -90,7 +86,7 @@ Robot robot;
 
         else if(w==4){
             if(ok==0) {
-                Point newPosition = new Point(x, y);
+                Point newPosition = new Point(y, x);
                 map.addDestionationPoint(newPosition);
                 System.out.println("Destination Point set to: (" + x + ", " + y + ")");
                 updateCellButton(x, y);
@@ -108,14 +104,14 @@ Robot robot;
     }
 
     private void addObstacle(int x, int y) {
-        Obstacle obstacle = new Obstacle(new Point(x, y));
+        Obstacle obstacle = new Obstacle(new Point(y, x));
         map.addObstacle(obstacle);
         System.out.println("Obstacle added at (" + x + ", " + y + ")");
         updateCellButton(x, y);
     }
     private void addChargingPoint(int x, int y) {
-        ChargingPoint chargingPoint = new ChargingPoint(new Point(x, y));
-        map.addCharginPoint(new Point(x, y));
+        ChargingPoint chargingPoint = new ChargingPoint(new Point(y, x));
+        map.addCharginPoint(new Point(y, x));
         System.out.println("Charging point added at (" + x + ", " + y + ")");
         updateCellButton(x, y);
     }
@@ -132,8 +128,8 @@ Robot robot;
             }
             else if(w==4){
                 button.setStyle("-fx-background-color: #b548d9;");
-
             }
+
         }
     }
     private Button getButtonFromGrid(int x, int y) {
@@ -153,6 +149,7 @@ Robot robot;
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
+
                 Button cellButton = new Button();
                 cellButton.setMinSize(15, 15);
                 cellButton.setStyle("-fx-background-color: lightgray; -fx-text-fill: black; -fx-font-size: 12; -fx-font-weight: bold;");
@@ -165,8 +162,15 @@ Robot robot;
                 int finalI = i;
                 int finalJ = j;
                 cellButton.setOnAction(event -> handleCellClick(finalI, finalJ));
+                w=1;
+                gridPane.add(cellButton, j, i);
+                if(i==0 || j==0|| i==rows-1||j==cols-1 ){
+                    addObstacle(i,j);
+                    updateCellButton(i,j);
+                }
+                w=0;
+            }
 
-                gridPane.add(cellButton, j, i);}
     }}
     @FXML
     private void handleAddRobot() {
@@ -205,12 +209,12 @@ Robot robot;
             if (step[0] < path.size()) {
                 // Highlight the current position
                 Point currentPoint = path.get(step[0]);
-                updateCellStyle(currentPoint.x, currentPoint.y, "#48a1d9"); // Robot's color
+                updateCellStyle(currentPoint.y, currentPoint.x, "#48a1d9"); // Robot's color
 
                 // Clear the previous position after moving
                 if (step[0] > 0) {
                     Point prevPoint = path.get(step[0] - 1);
-                    updateCellStyle(prevPoint.x, prevPoint.y, "lightgray"); // Reset to default style
+                    updateCellStyle(prevPoint.y, prevPoint.x, "lightgray"); // Reset to default style
                 }
 
                 step[0]++;
@@ -235,10 +239,13 @@ Robot robot;
         else{
             w=0;
             System.out.println("Simulation started!");
-            Pathfinding pathfinding = new Pathfinding(map.getDestination(),robot.getPosition(),map.m);
-            pathfinding.finalpathfinder(1000);
+            robot.batteryLevel=1000;
+            Pathfinding pathfinding = new Pathfinding(robot.getPosition(),map.getDestination(),map.m,robot);
+            pathfinding.tableofstations.addAll(map.getCharginStations());
+            pathfinding.finalpathfinder();
+
             for(Point p:pathfinding.finalp){
-                System.out.println("("+p.x+";"+p.y+")");//cos
+                System.out.println("("+p.y+";"+p.x+")");//cos
             }
             simulatePath(pathfinding.finalp);
         }

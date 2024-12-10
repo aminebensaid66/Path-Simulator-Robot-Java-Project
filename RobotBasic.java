@@ -1,6 +1,6 @@
 package com.example.demo;
 
-public class RobotBasic extends Robot {
+/*public class RobotBasic extends Robot {
     public RobotBasic( Point position, double batteryLevel,double conso) {
         super(batteryLevel,position,conso);
     }
@@ -18,4 +18,4 @@ public class RobotBasic extends Robot {
     }
 
 
-}
+}*/

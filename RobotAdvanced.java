@@ -1,7 +1,7 @@
 package com.example.demo;
 
 
-public class RobotAdvanced extends Robot {
+/*public class RobotAdvanced extends Robot {
     public RobotAdvanced(Point position, double batteryLevel,double conso) {
         super( batteryLevel,position,conso);
     }
@@ -13,3 +13,4 @@ public class RobotAdvanced extends Robot {
         position = destination;
     }
 }
+*/

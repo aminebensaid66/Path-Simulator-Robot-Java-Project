@@ -94,4 +94,3 @@ public class Path {
         return diagonalSteps * 14 + straightSteps * 10;
     }
 }
-
