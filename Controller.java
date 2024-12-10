@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -201,28 +202,47 @@ Robot robot;
             System.out.println("Path is empty or null.");
             return;
         }
-        System.out.println(path.get(0));
+        System.out.println("Starting simulation at: " + path.get(0));
         Timeline timeline = new Timeline();
         final int[] step = {0};
 
         KeyFrame moveFrame = new KeyFrame(Duration.seconds(1), event -> {
             if (step[0] < path.size()) {
-                // Highlight the current position
                 Point currentPoint = path.get(step[0]);
+
+                // Highlight the current position
                 updateCellStyle(currentPoint.y, currentPoint.x, "#48a1d9"); // Robot's color
 
                 // Clear the previous position after moving
                 if (step[0] > 0) {
                     Point prevPoint = path.get(step[0] - 1);
-                    updateCellStyle(prevPoint.y, prevPoint.x, "lightgray"); // Reset to default style
+                    if (!prevPoint.equals(currentPoint)) { // Avoid clearing if still at the same charging point
+                        updateCellStyle(prevPoint.y, prevPoint.x, "lightgray"); // Reset to default style
+                    }
                 }
 
-                step[0]++;
+                // Check if the robot is at a charging station
+                if (step[0] > 0 && currentPoint.equals(path.get(step[0] - 1))) {
+                    // Robot stays at the charging station for 5 seconds
+                    timeline.pause();
+                    System.out.println("Charging at: " + currentPoint);
+
+                    // Resume after 5 seconds
+                    new Timeline(new KeyFrame(Duration.seconds(5), e -> {
+                        step[0]++;
+                        timeline.play();
+                    })).play();
+                    return; // Exit this frame early to avoid incrementing step again
+                }
+
+                step[0]++; // Move to the next step if not charging
+            } else {
+                timeline.stop(); // Stop the timeline when the path is complete
             }
         });
 
         timeline.getKeyFrames().add(moveFrame);
-        timeline.setCycleCount(path.size());
+        timeline.setCycleCount(Animation.INDEFINITE); // Set to indefinite to manually control stopping
         timeline.play();
     }
     @FXML
@@ -239,15 +259,18 @@ Robot robot;
         else{
             w=0;
             System.out.println("Simulation started!");
-            robot.batteryLevel=1000;
-            Pathfinding pathfinding = new Pathfinding(robot.getPosition(),map.getDestination(),map.m,robot);
-            pathfinding.tableofstations.addAll(map.getCharginStations());
-            pathfinding.finalpathfinder();
+            robot.batteryLevel=100;
+            Pathfinding pathfinding = new Pathfinding(robot.getPosition(),map.getDestination(),map.m,robot,map.getCharginStations());
+            pathfinding.findFinalPath();
 
-            for(Point p:pathfinding.finalp){
+            for(Point p:pathfinding.finalPath){
                 System.out.println("("+p.y+";"+p.x+")");//cos
             }
-            simulatePath(pathfinding.finalp);
+
+            simulatePath(pathfinding.finalPath);
+            if(pathfinding.finalPath.size()==0){
+                showError("impossible de parcourir a la destinations");
+            }
         }
     }
         }
