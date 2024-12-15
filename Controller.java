@@ -274,18 +274,18 @@ Robot robot;
             w=0;
             System.out.println("Simulation started!");
             robot.batteryLevel=100;
-            Pathfinding pathfinding = new Pathfinding(robot.getPosition(),map.getDestination(),map.m,robot,map.getCharginStations());
-            pathfinding.findFinalPath();
+            Pathfinding pathfinding = new Pathfinding(map.getDestination(),robot.getPosition(),map.m,robot);
+            pathfinding.finalpathfinder();
 
-            for(Point p:pathfinding.finalPath){
+            for(Point p:pathfinding.finalp){
                 System.out.println("("+p.y+";"+p.x+")");//cos
             }
 
-            simulatePath(pathfinding.finalPath);
-            if(pathfinding.finalPath.size()==0){
+            simulatePath(pathfinding.finalp);
+            if(pathfinding.finalp.size()==0){
                 showError("impossible de parcourir a la destinations");
             }
-            else if(!pathfinding.finalPath.getLast().equals(map.getDestination())){
+            else if(!pathfinding.finalp.getLast().equals(map.getDestination())){
                 showError("not enough power to resume ");
             }
         }
