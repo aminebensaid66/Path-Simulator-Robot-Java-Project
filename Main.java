@@ -13,7 +13,7 @@ public class Main extends Application {
         Scene scene = new Scene(loader.load());
         primaryStage.setScene(scene);
         primaryStage.setTitle("Robot Simulator");
-        primaryStage.show();
+        primaryStage.show();;
     }
 
     public static void main(String[] args) {
