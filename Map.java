@@ -16,6 +16,7 @@ public class Map {
         this.colonne = colonne;
         m=new int[ligne][colonne];
         charginStations  = new ArrayList<>();
+
     }
     public Point getDestination(){
         return destination;

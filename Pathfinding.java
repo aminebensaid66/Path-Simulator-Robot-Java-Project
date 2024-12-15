@@ -54,7 +54,7 @@ public class Pathfinding {
         for (int i = 0; i < path.size() - 1; i++) {
             Point current = path.get(i);
             Point next = path.get(i + 1);
-            cost += (current.x == next.x || current.y == next.y) ? 10 : 14;
+            cost += (current.x == next.x || current.y == next.y) ? 10 : 14;//cost per case
         }
         return cost;
     }

@@ -3,7 +3,7 @@ public class Point {
     int x,y;
     int hCost,gCost;
     Point parent;
-    public boolean equals(Point p) {
+    public boolean  equals(Point p) {
         return x==p.x && y==p.y;
     }
     public Point(int x, int y) {

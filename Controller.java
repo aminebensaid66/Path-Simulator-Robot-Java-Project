@@ -225,7 +225,7 @@ Robot robot;
                 if (step[0] > 0 && currentPoint.equals(path.get(step[0] - 1))) {
                     // Robot stays at the charging station for 5 seconds
                     timeline.pause();
-                    System.out.println("Charging at: " + currentPoint);
+                    System.out.println("Charging at:( " + currentPoint.x+","+currentPoint.y+")");
 
                     // Resume after 5 seconds
                     new Timeline(new KeyFrame(Duration.seconds(5), e -> {
@@ -251,10 +251,24 @@ Robot robot;
         System.out.println("Click on a cell to set the robot's destination.");
     }
     @FXML
+    private void handleReset(){
+        w=0;robot=null;
+        int rows = Integer.parseInt(rowsField.getText());
+        int cols = Integer.parseInt(colsField.getText());
+        map = new Map(rows, cols);
+        createGrid(rows, cols);
+
+    }
+    @FXML
     private void handleStartSimulation() {
         if (map == null) {
             showError("Please set the map dimensions first.");
             return;
+        }
+        else if(robot==null){
+            showError("ajouter un robot ");
+        } else if (map.getDestination()==null) {
+            showError("choisir une destination");
         }
         else{
             w=0;
@@ -270,6 +284,9 @@ Robot robot;
             simulatePath(pathfinding.finalPath);
             if(pathfinding.finalPath.size()==0){
                 showError("impossible de parcourir a la destinations");
+            }
+            else if(!pathfinding.finalPath.getLast().equals(map.getDestination())){
+                showError("not enough power to resume ");
             }
         }
     }
